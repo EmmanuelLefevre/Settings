@@ -1,7 +1,7 @@
 #---------------#
 # PROMPT THEMES #
 #---------------#
-oh-my-posh init pwsh --config 'C:/Users/darka/Documents/PowerShell/myprofile.omp.json' | Invoke-Expression
+oh-my-posh init pwsh --config 'C:/Users/darka/Documents/PowerShell/powershell_profile.omp.json' | Invoke-Expression
 #oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.omp.json' | Invoke-Expression
 #oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/atomic.omp.json' | Invoke-Expression
 
