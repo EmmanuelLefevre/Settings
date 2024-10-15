@@ -32,7 +32,7 @@ Set-PSReadLineOption -PredictionViewStyle ListView
 # HELPERS #
 #---------#
 
-########## Help alias ##########
+########## Get help ##########
 function help {
   $scriptInfo = Get-ScriptInfo
   $FileName = $scriptInfo.FileName
@@ -64,7 +64,7 @@ function help {
     # Display each alias informations
     foreach ($alias in $sortedAliasArray) {
       Write-Host -NoNewline ("{0,-21}" -f "$($alias.Alias)") -ForegroundColor DarkCyan
-      Write-Host -NoNewline ("{0,-31}" -f "$($alias.Definition)") -ForegroundColor Magenta
+      Write-Host -NoNewline ("{0,-31}" -f "$($alias.Definition)") -ForegroundColor DarkMagenta
       Write-Host ("{0,-30}" -f "$($alias.FileName)") -ForegroundColor Yellow
     }
     Write-Host ""
@@ -75,7 +75,7 @@ function help {
   }
 }
 
-########## List of custom aliases ##########
+########## Get custom aliases ##########
 function custom_alias {
   $scriptInfo = Get-ScriptInfo
   $ScriptPath = $scriptInfo.Path
@@ -105,7 +105,7 @@ function custom_alias {
     # Display each alias informations
     foreach ($alias in $customAliases) {
       Write-Host -NoNewline ("{0,-11}" -f "$($alias.Name)") -ForegroundColor DarkCyan
-      Write-Host -NoNewline ("{0,-21}" -f "$($alias.Alias)") -ForegroundColor Magenta
+      Write-Host -NoNewline ("{0,-21}" -f "$($alias.Alias)") -ForegroundColor DarkMagenta
       Write-Host ("{0,-40}" -f "$($alias.FileName)") -ForegroundColor Yellow
     }
     Write-Host ""
@@ -116,7 +116,7 @@ function custom_alias {
   }
 }
 
-########## List of custom functions ##########
+########## Get custom functions ##########
 function custom_function {
   $scriptInfo = Get-ScriptInfo
   $ScriptPath = $scriptInfo.Path
@@ -159,7 +159,7 @@ function custom_function {
       Write-Host -NoNewline ("{0,-19}" -f "$($function.Alias)") -ForegroundColor DarkCyan
 
       $goal = $goals[$function.Alias]
-      Write-Host -NoNewline ("{0,-51}" -f "$goal") -ForegroundColor Magenta
+      Write-Host -NoNewline ("{0,-51}" -f "$goal") -ForegroundColor DarkMagenta
 
       Write-Host ("{0,-50}" -f "$($function.FileName)") -ForegroundColor Yellow
     }
@@ -171,25 +171,19 @@ function custom_function {
   }
 }
 
-########## Display all powershell colors in terminal ##########
-function colors {
-  $colors = [enum]::GetValues([System.ConsoleColor])
-
-  Foreach ($bgcolor in $colors) {
-    Foreach ($fgcolor in $colors) {
-      Write-Host "$fgcolor|" -ForegroundColor $fgcolor -BackgroundColor $bgcolor -NoNewLine
-    }
-
-  Write-Host " on $bgcolor"
-  }
-}
-
 
 #-----------#
 # FUNCTIONS #
 #-----------#
 
-########## Goto ##########
+########## Display the current directory path ##########
+function path {
+  Write-Host ""
+  $currentPath = Get-Location
+  Write-Host $currentPath -ForegroundColor DarkMagenta
+}
+
+########## Jump to a specific directory ##########
 function go {
   param (
     [string]$location
@@ -255,7 +249,7 @@ function go {
   }
 }
 
-########## Whereis ##########
+########## Find path of a specified command/executable ##########
 function whereis ($comand) {
   Get-Command -Name $comand -ErrorAction SilentlyContinue |
   Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
@@ -279,6 +273,19 @@ function ssh_github {
   }
 }
 
+########## Display powershell colors in terminal ##########
+function colors {
+  $colors = [enum]::GetValues([System.ConsoleColor])
+
+  Foreach ($bgcolor in $colors) {
+    Foreach ($fgcolor in $colors) {
+      Write-Host "$fgcolor|" -ForegroundColor $fgcolor -BackgroundColor $bgcolor -NoNewLine
+    }
+
+  Write-Host " on $bgcolor"
+  }
+}
+
 
 #-------------------#
 # UTILITY FUNCTIONS #
@@ -287,11 +294,12 @@ function ssh_github {
 ########## Dictionary of functions and their objectives ##########
 function Get-GoalFunctionsDictionary {
   $goalFunctions = @{
-    colors = "Display all powershell colors in terminal"
-    custom_alias = "Get all custom aliases"
-    custom_function  = "Get objective function"
-    go = "Go directly to a specific directory"
-    help = "Get help aliases"
+    colors = "Display powershell colors in terminal"
+    custom_alias = "Get custom aliases"
+    custom_function  = "Get custom functions"
+    go = "Jump to a specific directory"
+    help = "Get help"
+    path = "Display the current directory path"
     ssh_github = "Test GitHub SSH connection with GPG keys"
     whereis = "Find path of a specified command/executable"
   }
@@ -308,7 +316,7 @@ function Get-ScriptInfo {
   # Display script path
   Write-Host ""
   Write-Host "ScriptPath: " -ForegroundColor DarkGray -NoNewline
-  Write-Host "$ScriptPath" -ForegroundColor DarkYellow
+  Write-Host "$ScriptPath" -ForegroundColor DarkMagenta
   Write-Host ""
 
   return @{ Path = $ScriptPath; FileName = $FileName }
