@@ -1,7 +1,7 @@
 #---------------#
 # PROMPT THEMES #
 #---------------#
-oh-my-posh init pwsh --config 'C:/Users/darka/Documents/PowerShell/powershell_profile_darka.omp.json' | Invoke-Expression
+oh-my-posh init pwsh --config 'C:/Users/darka/Documents/PowerShell/powershell_profile.darka.json' | Invoke-Expression
 
 #---------#
 # ALIASES #
@@ -193,7 +193,9 @@ function go {
 
   # List of valid options and their corresponding paths
   $validOptions = @(
+    @{ Name = "aw"; Path = "$HOME\Desktop\Projets\ArtiWave" },
     @{ Name = "dwld"; Path = "$HOME\Downloads" },
+    @{ Name = "eg"; Path = "$HOME\Desktop\Projets\EasyGarden" },
     @{ Name = "home"; Path = "$HOME" },
     @{ Name = "nvim"; Path = "$HOME\AppData\Local\nvim" },
     @{ Name = "profile"; Path = "$HOME\Documents\PowerShell" },
@@ -209,8 +211,14 @@ function go {
   }
 
   Switch ($location) {
+    "aw" {
+      Set-Location -Path "$HOME\Desktop\Projets\ArtiWave"
+    }
     "dwld" {
       Set-Location -Path "$HOME\Downloads"
+    }
+    "eg" {
+      Set-Location -Path "$HOME\Desktop\Projets\EasyGarden"
     }
     "home" {
       Set-Location -Path "$HOME"
@@ -227,7 +235,7 @@ function go {
     "help" {
       # Create a table of valid options
       Write-Host ""
-      Write-Host ("{0,-20} {1,-50}" -f "Alias", "PathDirection") -ForegroundColor White -BackgroundColor DarkGray
+      Write-Host ("{0,-20} {1,-50}" -f "Alias", "Path Direction") -ForegroundColor White -BackgroundColor DarkGray
 
       foreach ($option in $validOptions) {
         if ($option.Name -ne "help") {
