@@ -2,9 +2,6 @@
 # PROMPT THEMES #
 #---------------#
 oh-my-posh init pwsh --config 'C:/Users/darka/Documents/PowerShell/powershell_profile.omp.json' | Invoke-Expression
-#oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.omp.json' | Invoke-Expression
-#oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/atomic.omp.json' | Invoke-Expression
-
 
 #---------#
 # ALIASES #
@@ -20,8 +17,6 @@ Set-Alias tt tree
 
 ########## Terminal Icons ##########
 Import-Module Terminal-Icons
-########## SSH ##########
-Import-Module Posh-SSH
 ########## PSReadLine ##########
 Import-Module PSReadLine
 Set-PSReadLineKeyHandler -Key Tab -Function Complete
