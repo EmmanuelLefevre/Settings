@@ -1,7 +1,7 @@
 #---------------#
 # PROMPT THEMES #
 #---------------#
-oh-my-posh init pwsh --config "$env:USERPROFILE/Documents/PowerShell/powershell_profile.darka.json" | Invoke-Expression
+oh-my-posh init pwsh --config "$env:USERPROFILE/Documents/PowerShell/powershell_profile_darka.json" | Invoke-Expression
 
 #---------#
 # ALIASES #
@@ -178,6 +178,23 @@ function path {
   Write-Host $currentPath -ForegroundColor DarkMagenta
 }
 
+########## Create a file ##########
+function touch {
+  param (
+    [string]$path
+  )
+
+  # If file does not exist, create it
+  if (-not (Test-Path -Path $path)) {
+    New-Item -Path $path -ItemType File
+  }
+  # Display message if file already exists
+  else {
+    Write-Host ""
+    Write-Host " File always exists! " -ForegroundColor DarkRed -BackgroundColor DarkYellow
+  }
+}
+
 ########## Jump to a specific directory ##########
 function go {
   param (
@@ -304,6 +321,7 @@ function Get-GoalFunctionsDictionary {
     help = "Get help"
     path = "Display the current directory path"
     ssh_github = "Test GitHub SSH connection with GPG keys"
+    touch = "Create a file"
     whereis = "Find path of a specified command/executable"
   }
   return $goalFunctions
