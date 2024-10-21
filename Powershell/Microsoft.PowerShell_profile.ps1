@@ -190,7 +190,6 @@ function touch {
   }
   # Display message if file already exists
   else {
-    Write-Host ""
     Write-Host " File always exists! " -ForegroundColor DarkRed -BackgroundColor DarkYellow
   }
 }
@@ -203,7 +202,6 @@ function go {
 
   # Check if the argument is empty
   if (-not $location) {
-    Write-Host ""
     Write-Host "Invalid option !!! Type 'go help'" -ForegroundColor DarkRed -BackgroundColor DarkYellow
     return
   }
@@ -222,7 +220,6 @@ function go {
 
   # Check if the passed argument is valid
   if ($validOptions.Name -notcontains $location) {
-    Write-Host ""
     Write-Host " Invalid argument !!! Type 'go help' " -ForegroundColor DarkRed -BackgroundColor DarkYellow
     return
   }
@@ -263,7 +260,6 @@ function go {
       Write-Host ""
     }
     default {
-      Write-Host ""
       Write-Host " Error occurred !!! " -ForegroundColor DarkRed -BackgroundColor DarkYellow
     }
   }
