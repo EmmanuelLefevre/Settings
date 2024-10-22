@@ -60,13 +60,13 @@ function help {
     foreach ($alias in $sortedAliasArray) {
       Write-Host -NoNewline ("{0,-21}" -f "$($alias.Alias)") -ForegroundColor DarkCyan
       Write-Host -NoNewline ("{0,-31}" -f "$($alias.Definition)") -ForegroundColor DarkMagenta
-      Write-Host ("{0,-30}" -f "$($alias.FileName)") -ForegroundColor Yellow
+      Write-Host ("{0,-30}" -f " $($alias.FileName)") -ForegroundColor Yellow
     }
     Write-Host ""
   }
   else {
     Write-Host ""
-    Write-Host " No help aliases found in script !!! " -ForegroundColor DarkRed -BackgroundColor DarkYellow
+    Write-Host "⚠️ No help aliases found in script !!! ⚠️" -ForegroundColor DarkRed
   }
 }
 
@@ -101,13 +101,13 @@ function custom_alias {
     foreach ($alias in $customAliases) {
       Write-Host -NoNewline ("{0,-11}" -f "$($alias.Name)") -ForegroundColor DarkCyan
       Write-Host -NoNewline ("{0,-21}" -f "$($alias.Alias)") -ForegroundColor DarkMagenta
-      Write-Host ("{0,-40}" -f "$($alias.FileName)") -ForegroundColor Yellow
+      Write-Host ("{0,-40}" -f " $($alias.FileName)") -ForegroundColor Yellow
     }
     Write-Host ""
   }
   else {
     Write-Host ""
-    Write-Host " No custom aliases found in script !!! " -ForegroundColor DarkRed -BackGroundColor DarkYellow
+    Write-Host "⚠️ No custom aliases found in script !!! ⚠️" -ForegroundColor DarkRed
   }
 }
 
@@ -156,13 +156,13 @@ function custom_function {
       $goal = $goals[$function.Alias]
       Write-Host -NoNewline ("{0,-51}" -f "$goal") -ForegroundColor DarkMagenta
 
-      Write-Host ("{0,-50}" -f "$($function.FileName)") -ForegroundColor Yellow
+      Write-Host ("{0,-50}" -f " $($function.FileName)") -ForegroundColor Yellow
     }
     Write-Host ""
   }
   else {
     Write-Host ""
-    Write-Host " No custom functions found in script !!! " -ForegroundColor DarkRed -BackGroundColor DarkYellow
+    Write-Host "⚠️ No custom functions found in script !!! ⚠️" -ForegroundColor DarkRed
   }
 }
 
@@ -190,7 +190,7 @@ function touch {
   }
   # Display message if file already exists
   else {
-    Write-Host " File always exists! " -ForegroundColor DarkRed -BackgroundColor DarkYellow
+    Write-Host "⚠️ File always exists !!! ⚠️" -ForegroundColor DarkRed
   }
 }
 
@@ -202,7 +202,7 @@ function go {
 
   # Check if the argument is empty
   if (-not $location) {
-    Write-Host "Invalid option !!! Type 'go help'" -ForegroundColor DarkRed -BackgroundColor DarkYellow
+    Write-Host "⚠️ Invalid option !!! Type 'go help' ⚠️" -ForegroundColor DarkRed
     return
   }
 
@@ -220,7 +220,7 @@ function go {
 
   # Check if the passed argument is valid
   if ($validOptions.Name -notcontains $location) {
-    Write-Host " Invalid argument !!! Type 'go help' " -ForegroundColor DarkRed -BackgroundColor DarkYellow
+    Write-Host "⚠️ Invalid argument !!! Type 'go help' ⚠️" -ForegroundColor DarkRed
     return
   }
 
@@ -260,7 +260,7 @@ function go {
       Write-Host ""
     }
     default {
-      Write-Host " Error occurred !!! " -ForegroundColor DarkRed -BackgroundColor DarkYellow
+      Write-Host "⚠️ Error occurred !!! ⚠️" -ForegroundColor DarkRed
     }
   }
 }
@@ -277,7 +277,7 @@ function ssh_github {
     [string]$hostname = "github.com",  # default host
     [int]$port = 22                    # default port for SSH
   )
-  Write-Host "Launch SSH connection with GPG keys..." -ForegroundColor Green
+  Write-Host "🚀 Launch SSH connection with GPG keys 🚀" -ForegroundColor Green
   # Test connection to SSH server
   $connection = Test-NetConnection -ComputerName $hostname -Port $port
   if ($connection.TcpTestSucceeded) {
@@ -302,6 +302,108 @@ function colors {
   }
 }
 
+########## Update your local repositories ##########
+function git_pull {
+  # Get local repositories information and their order
+  $reposInfo = Get-RepositoriesInfo
+  $reposOrder = $reposInfo.Order
+  $repos = $reposInfo.Paths
+  # Get GitHub username
+  $username = $reposInfo.Username
+
+  # Iterate over each repository in the defined order
+  foreach ($repoName in $reposOrder) {
+    $repoPath = $repos[$repoName]
+    if (Test-Path -Path $repoPath) {
+      # Change current directory to repository path
+      Set-Location -Path $repoPath
+
+      # Show the name of the repository being updated
+      Write-Host -NoNewline "$repoName " -ForegroundColor Magenta
+      Write-Host "repository is on update process... 🚀" -NoNewline
+      Write-Host ""
+
+      try {
+        # Check for remote repository existence using GitHub API
+        $repoUrl = "https://api.github.com/repos/$username/$repoName"
+        $response = Invoke-RestMethod -Uri $repoUrl -Method Get -ErrorAction Stop
+
+        # Check current branch
+        $currentBranch = git rev-parse --abbrev-ref HEAD
+        # If branch isn't "master" or "main"
+        if ($currentBranch -ne "main" -and $currentBranch -ne "master") {
+          Write-Host "⚠️ $repoName is on $currentBranch not 'main' or 'master'! Cancelling update ⚠️" -ForegroundColor DarkRed
+          Write-Host "--------------------------------------------------------------------"
+
+          # Next repository
+          continue
+        }
+
+        # Check if local changes exist before pull
+        $diffOutput = git diff --name-only
+        if ($diffOutput) {
+          Write-Host "󰨈  Conflict detected! Pull avoided... 󰨈" -ForegroundColor Red
+          Write-Host "Affected files =>"
+          foreach ($file in $diffOutput) {
+            Write-Host " $file" -ForegroundColor DarkCyan
+          }
+          Write-Host "--------------------------------------------------------------------"
+
+          # Next repository
+          continue
+        }
+
+        # Check if repository is already updated
+        git fetch
+        $localCommit = git rev-parse HEAD
+        $remoteCommit = git rev-parse "origin/$currentBranch"
+
+        if ($localCommit -eq $remoteCommit) {
+          Write-Host "Already updated 🤙" -ForegroundColor Green
+          Write-Host "--------------------------------------------------------------------"
+
+          # Next repository
+          continue
+        }
+
+        # Execute the git pull command if everything is correct
+        git pull
+
+        # Check if the command was successful
+        if ($LASTEXITCODE -eq 0) {
+          Write-Host "✅ Successfully updated ✅" -ForegroundColor Green
+          Write-Host "--------------------------------------------------------------------"
+        }
+        else {
+          Write-Host "⚠️ Error updating $repoName !!! ⚠️" -ForegroundColor Red
+          Write-Host "--------------------------------------------------------------------"
+        }
+      }
+      catch {
+        # Check if the error is related to the remote repository not existing
+        if ($_.Exception.Response.StatusCode -eq 404) {
+          Write-Host "⚠️ Remote repository `"$repoName`" doesn't exist !!! ⚠️" -ForegroundColor Red
+        }
+        else {
+          Write-Host "⚠️ An error occurred while updating {$repoName}: ${_} ⚠️" -ForegroundColor Red
+          Write-Host "--------------------------------------------------------------------"
+        }
+      }
+
+      # Line separator after each repository processing
+      Write-Host "--------------------------------------------------------------------"
+
+      # Return to home directory
+      Set-Location -Path $HOME
+    }
+    else {
+      Write-Host "⚠️ Local repository `"$repoName`" doesn't exist !!! ⚠️" -ForegroundColor Red
+      Write-Host "--------------------------------------------------------------------"
+    }
+  }
+}
+
+
 
 #-------------------#
 # UTILITY FUNCTIONS #
@@ -313,6 +415,7 @@ function Get-GoalFunctionsDictionary {
     colors = "Display powershell colors in terminal"
     custom_alias = "Get custom aliases"
     custom_function  = "Get custom functions"
+    git_pull = "Update your local repositories"
     go = "Jump to a specific directory"
     help = "Get help"
     path = "Display the current directory path"
@@ -337,4 +440,29 @@ function Get-ScriptInfo {
   Write-Host ""
 
   return @{ Path = $ScriptPath; FileName = $FileName }
+}
+
+########## Get local repositories information ##########
+function Get-RepositoriesInfo {
+  # GitHub username
+  $GitHubUsername = "EmmanuelLefevre"
+
+  # Array to define the order of repositories
+  $reposOrder = @("Documentations", "EmmanuelLefevre", "IAmEmmanuelLefevre", "Schemas", "Settings", "Soutenances")
+
+  # Dictionary containing local repositories path
+  $repos = @{
+    "Documentations"        = "$env:USERPROFILE\Documents\Documentations"
+    "EmmanuelLefevre"       = "$env:USERPROFILE\Desktop\Projets\EmmanuelLefevre"
+    "IAmEmmanuelLefevre"    = "$env:USERPROFILE\Desktop\Projets\IAmEmmanuelLefevre"
+    "Schemas"               = "$env:USERPROFILE\Desktop\Schemas"
+    "Settings"              = "$env:USERPROFILE\Desktop\Settings"
+    "Soutenances"           = "$env:USERPROFILE\Desktop\Soutenances"
+  }
+
+  return @{
+    Username = $GitHubUsername
+    Order = $reposOrder
+    Paths = $repos
+  }
 }
