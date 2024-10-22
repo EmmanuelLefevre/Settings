@@ -54,7 +54,7 @@ function help {
   # Check if any aliases were found and display them
   if ($sortedAliasArray.Count -gt 0) {
     # Display headers
-    Write-Host ("{0,-20} {1,-30} {2,-40}" -f "Alias", "Definition", "FileName") -ForegroundColor White -BackgroundColor DarkGray
+    Write-Host ("{0,-20} {1,-30} {2,-40}" -f "Alias", "Definition", "File Name") -ForegroundColor White -BackgroundColor DarkGray
 
     # Display each alias informations
     foreach ($alias in $sortedAliasArray) {
@@ -66,7 +66,7 @@ function help {
   }
   else {
     Write-Host ""
-    Write-Host "⚠️ No help aliases found in script !!! ⚠️" -ForegroundColor DarkRed
+    Write-Host "⚠️ No help aliases found in script ⚠️" -ForegroundColor Red
   }
 }
 
@@ -107,7 +107,7 @@ function custom_alias {
   }
   else {
     Write-Host ""
-    Write-Host "⚠️ No custom aliases found in script !!! ⚠️" -ForegroundColor DarkRed
+    Write-Host "⚠️ No custom aliases found in script ⚠️" -ForegroundColor Red
   }
 }
 
@@ -162,7 +162,7 @@ function custom_function {
   }
   else {
     Write-Host ""
-    Write-Host "⚠️ No custom functions found in script !!! ⚠️" -ForegroundColor DarkRed
+    Write-Host "⚠️ No custom functions found in script ⚠️" -ForegroundColor Red
   }
 }
 
@@ -190,7 +190,7 @@ function touch {
   }
   # Display message if file already exists
   else {
-    Write-Host "⚠️ File always exists !!! ⚠️" -ForegroundColor DarkRed
+    Write-Host "⚠️ File always exists ⚠️" -ForegroundColor Red
   }
 }
 
@@ -202,25 +202,26 @@ function go {
 
   # Check if the argument is empty
   if (-not $location) {
-    Write-Host "⚠️ Invalid option !!! Type 'go help' ⚠️" -ForegroundColor DarkRed
+    Write-Host "⚠️ Invalid option! Type 'go help' ⚠️" -ForegroundColor Red
     return
   }
 
   # List of valid options and their corresponding paths
   $validOptions = @(
-    @{ Name = "aw"; Path = "$HOME\Desktop\Projets\ArtiWave" },
-    @{ Name = "dwld"; Path = "$HOME\Downloads" },
-    @{ Name = "eg"; Path = "$HOME\Desktop\Projets\EasyGarden" },
-    @{ Name = "home"; Path = "$HOME" },
-    @{ Name = "nvim"; Path = "$HOME\AppData\Local\nvim" },
-    @{ Name = "profile"; Path = "$HOME\Documents\PowerShell" },
-    @{ Name = "projets"; Path = "$HOME\Desktop\Projets" },
-    @{ Name = "help"; Path = "Available paths" }
+    @{ Name = "aw";        Path = "$HOME\Desktop\Projets\ArtiWave" },
+    @{ Name = "dwld";      Path = "$HOME\Downloads" },
+    @{ Name = "eg";        Path = "$HOME\Desktop\Projets\EasyGarden" },
+    @{ Name = "el";        Path = "$HOME\Desktop\Projets\EmmanuelLefevre" },
+    @{ Name = "home";      Path = "$HOME" },
+    @{ Name = "nvim";      Path = "$HOME\AppData\Local\nvim" },
+    @{ Name = "profile";   Path = "$HOME\Documents\PowerShell" },
+    @{ Name = "projets";   Path = "$HOME\Desktop\Projets" },
+    @{ Name = "help";      Path = "Available paths" }
   )
 
   # Check if the passed argument is valid
   if ($validOptions.Name -notcontains $location) {
-    Write-Host "⚠️ Invalid argument !!! Type 'go help' ⚠️" -ForegroundColor DarkRed
+    Write-Host "⚠️ Invalid argument! Type 'go help' ⚠️" -ForegroundColor Red
     return
   }
 
@@ -233,6 +234,9 @@ function go {
     }
     "eg" {
       Set-Location -Path "$HOME\Desktop\Projets\EasyGarden"
+    }
+    "el" {
+      Set-Location -Path "$HOME\Desktop\Projets\EmmanuelLefevre"
     }
     "home" {
       Set-Location -Path "$HOME"
@@ -254,13 +258,13 @@ function go {
       foreach ($option in $validOptions) {
         if ($option.Name -ne "help") {
           Write-Host -NoNewline ("{0,-21}" -f "$($option.Name)") -ForegroundColor DarkCyan
-          Write-Host ("{0,-50}" -f "$($option.Path)") -ForegroundColor Yellow
+          Write-Host ("{0,-50}" -f " $($option.Path)") -ForegroundColor Yellow
         }
       }
       Write-Host ""
     }
     default {
-      Write-Host "⚠️ Error occurred !!! ⚠️" -ForegroundColor DarkRed
+      Write-Host "⚠️ Error occurred! ⚠️" -ForegroundColor Red
     }
   }
 }
@@ -285,7 +289,11 @@ function ssh_github {
     & "C:\Windows\System32\OpenSSH\ssh.exe" -T git@github.com
   }
   else {
-    Write-Host "Unable to connect to $hostname on port $port!" -ForegroundColor Red
+    Write-Host -NoNewline "⚠️ Unable to connect to " -ForegroundColor Red
+    Write-Host -NoNewline "$hostname" -ForegroundColor Magenta
+    Write-Host -NoNewline " on port " -ForegroundColor Red
+    Write-Host -NoNewline "$port" -ForegroundColor Magenta
+    Write-Host "! ⚠️" -ForegroundColor Red
   }
 }
 
