@@ -320,7 +320,7 @@ function git_pull {
 
       # Show the name of the repository being updated
       Write-Host -NoNewline "$repoName " -ForegroundColor Magenta
-      Write-Host "repository is on update process... 🚀" -NoNewline
+      Write-Host "is on update process... 🚀" -NoNewline
       Write-Host ""
 
       try {
