@@ -384,9 +384,12 @@ function git_pull {
         if ($_.Exception.Response.StatusCode -eq 404) {
           Write-Host "⚠️ Remote repository `"$repoName`" doesn't exist !!! ⚠️" -ForegroundColor Red
         }
+        # elseif ($responseBody.message -match "API rate limit exceeded") {
+        elseif ($_.Exception.Response.StatusCode -eq 403) {
+          Write-Host "󰊤 GitHub API rate limit exceeded! Try again later or authenticate to increase your rate limit. 󰊤" -ForegroundColor Red
+        }
         else {
           Write-Host "⚠️ An error occurred while updating {$repoName}: ${_} ⚠️" -ForegroundColor Red
-          Write-Host "--------------------------------------------------------------------"
         }
       }
 
