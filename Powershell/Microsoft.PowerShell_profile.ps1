@@ -332,7 +332,7 @@ function git_pull {
       Write-Host " is on update process 🚀"
 
       try {
-        # Check for remote repository existence using GitHub API
+        # Check for remote repository existence using GitHub API with authentication token
         $repoUrl = "https://api.github.com/repos/$username/$repoName"
         $response = Invoke-RestMethod -Uri $repoUrl -Method Get -Headers @{ Authorization = "Bearer $token" } -ErrorAction Stop
 
