@@ -316,8 +316,9 @@ function git_pull {
   $reposInfo = Get-RepositoriesInfo
   $reposOrder = $reposInfo.Order
   $repos = $reposInfo.Paths
-  # Get GitHub username
+  # Get GitHub username and token
   $username = $reposInfo.Username
+  $token = $reposInfo.Token
 
   # Iterate over each repository in the defined order
   foreach ($repoName in $reposOrder) {
@@ -333,7 +334,7 @@ function git_pull {
       try {
         # Check for remote repository existence using GitHub API
         $repoUrl = "https://api.github.com/repos/$username/$repoName"
-        $response = Invoke-RestMethod -Uri $repoUrl -Method Get -ErrorAction Stop
+        $response = Invoke-RestMethod -Uri $repoUrl -Method Get -Headers @{ Authorization = "Bearer $token" } -ErrorAction Stop
 
         # Check current branch
         $currentBranch = git rev-parse --abbrev-ref HEAD
@@ -399,9 +400,11 @@ function git_pull {
           Write-Host -NoNewline "$repoName" -ForegroundColor Magenta
           Write-Host " doesn't exists ⚠️" -ForegroundColor Red
         }
-        # elseif ($responseBody.message -match "API rate limit exceeded") {
         elseif ($_.Exception.Response.StatusCode -eq 403) {
           Write-Host "󰊤 GitHub API rate limit exceeded! Try again later or authenticate to increase your rate limit. 󰊤" -ForegroundColor Red
+        }
+        elseif ($_.Exception.Response.StatusCode -eq 401) {
+          Write-Host "󰊤 Bad credentials! Check your personal token 󰊤" -ForegroundColor Red
         }
         else {
           Write-Host -NoNewline "⚠️ An error occurred while updating "
@@ -469,6 +472,9 @@ function Get-RepositoriesInfo {
   # GitHub username
   $GitHubUsername = "EmmanuelLefevre"
 
+  # GitHub token
+  $gitHubToken = "<YOUR PERSONAL TOKEN>"
+
   # Array to define the order of repositories
   $reposOrder = @("Documentations", "EmmanuelLefevre", "IAmEmmanuelLefevre", "Schemas", "Settings", "Soutenances")
 
@@ -484,6 +490,7 @@ function Get-RepositoriesInfo {
 
   return @{
     Username = $GitHubUsername
+    Token = $gitHubToken
     Order = $reposOrder
     Paths = $repos
   }
