@@ -470,7 +470,7 @@ function Get-ScriptInfo {
 ########## Get local repositories information ##########
 function Get-RepositoriesInfo {
   # GitHub username
-  $GitHubUsername = "EmmanuelLefevre"
+  $GitHubUsername = "<Github Username>"
 
   # GitHub token
   $gitHubToken = "<YOUR PERSONAL TOKEN>"
